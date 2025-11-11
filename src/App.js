@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 
 export default function App() {
@@ -9,8 +9,14 @@ export default function App() {
 
   const [rating, setRating] = useState("");
 
-  const [redirectHistory, setRedirectHistory] = useState([]);
-    /* Add local storage abovve and add useEffect to intialize */
+  const [redirectHistory, setRedirectHistory] = useState(() => {
+    const saved = localStorage.getItem('redirectHistory');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('redirectHistory', JSON.stringify(redirectHistory));
+  }, [redirectHistory]);
 
   /* Can add more later */
   const urgeTypes = ['gaming', 'scrolling', 'avoiding', 'shows', 'food'];
@@ -83,7 +89,9 @@ export default function App() {
               </button>
             ))}
           </div>
-          <button onClick={() => setCurrentScreen('home')}>Back</button>
+          <div className="bottom__buttons">
+            <button onClick={() => setCurrentScreen('home')}>Back</button>
+          </div>
         </div>
       )}
 
@@ -92,18 +100,21 @@ export default function App() {
           <p>Ask yourself: </p>
           <h1>What am I avoiding and why?</h1>
 
-          <button onClick={() => setCurrentScreen('selectUrge')}>Back</button>
-          <button onClick={() => setCurrentScreen('alternatives')}>Next</button>
+          <div className="bottom__buttons">
+            <button onClick={() => setCurrentScreen('selectUrge')}>Back</button>
+            <button onClick={() => setCurrentScreen('alternatives')}>Next</button>
+          </div>
         </div>
       )}
 
       {currentScreen === 'alternatives' && (
         <div className='alternatives-screen'>
           <h2>
-            {/* Alternatives */}
-            Try one below instead
+            Let’s redirect that urge
+            {/* Try one below instead */}
           </h2>
           <p>Urge: {urgeLabels[selectedUrge]}</p>
+          <p className="alternative-try-text">Try one below:</p>
           <div>
   {/* Add shuffle button for alt activities */}
             {alternatives[selectedUrge].map(alt => (
@@ -119,7 +130,9 @@ export default function App() {
               </button>
             ))}
           </div>
-          <button onClick={() => setCurrentScreen('why')}>Back</button>
+          <div className="bottom__buttons">
+            <button onClick={() => setCurrentScreen('why')}>Back</button>
+          </div>
         </div>
 
       )}
@@ -145,26 +158,28 @@ export default function App() {
 
             </textarea>
           </div>
-          <button onClick={() => setCurrentScreen('alternatives')}>Back</button>
-          <button
-            onClick={() => {
-              if (rating) {
-                const newRedirect = {
-                  urge: selectedUrge,
-                  alternatives: selectedAlternative,
-                  rating: parseInt(rating),
-                  timestamp: new Date().toISOString(),
-                };
+          <div className="bottom__buttons">
+            <button onClick={() => setCurrentScreen('alternatives')}>Back</button>
+            <button
+              onClick={() => {
+                if (rating) {
+                  const newRedirect = {
+                    urge: selectedUrge,
+                    alternative: selectedAlternative,
+                    rating: parseInt(rating),
+                    timestamp: new Date().toISOString(),
+                  };
 
-                setRedirectHistory([...redirectHistory, newRedirect]);
+                  setRedirectHistory([...redirectHistory, newRedirect]);
 
-                setSelectedUrge('')
-                setSelectedAlternative('')
-                setRating('')
-                setCurrentScreen('stats')
-              }
-            }}
-          >Done</button>
+                  setSelectedUrge('')
+                  setSelectedAlternative('')
+                  setRating('')
+                  setCurrentScreen('stats')
+                }
+              }}
+            >Done</button>
+          </div>
         </div>
       )}
 
@@ -192,14 +207,33 @@ export default function App() {
               View All History ({redirectHistory.length})
             </button>
           )}
-          <button onClick={() => setCurrentScreen('home')}>Home</button>
+          <div className="bottom__buttons">
+            <button onClick={() => setCurrentScreen('rating')}>Back</button>
+            <button onClick={() => setCurrentScreen('home')}>Home</button>
+          </div>
         </div>
       )}
 
     {/* Shows all history */}
     { currentScreen === 'history' && (
-      <div>
-        
+      <div className="history-screen">
+        <h2>Your History</h2>
+        <div className="history-list">
+          {redirectHistory.slice().reverse().map((redirect, index) => (
+            <div key={index} className="history-item">
+              <p><strong>{urgeLabels[redirect.Urge]}</strong></p>
+              <p>→ {redirect.alternative} </p>
+              <p>Felt: {redirect.rating}/10</p>
+              <p className="timestamp">
+                {new Date(redirect.timestamp).toLocaleDateString()}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="bottom__buttons">
+          <button onClick={() => setCurrentScreen('stats')}>Back</button>
+          <button onClick={() => setCurrentScreen('home')}>Home</button>
+        </div>
       </div>
     )}
 
