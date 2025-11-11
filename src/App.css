@@ -352,6 +352,11 @@ button:last-child:hover {
     padding: 1.5rem 1rem;
     font-size: 1rem;
   }
+  .urge__buttons > :nth-child(5) {
+    grid-column: auto;
+    justify-self: stretch;
+    width: 100%;
+  }
 
   .why-screen h1 {
     font-size: 1.5rem;
