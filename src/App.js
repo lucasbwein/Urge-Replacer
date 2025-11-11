@@ -196,7 +196,12 @@ export default function App() {
         </div>
       )}
 
-    {/* TODO add history home screen */}
+    {/* Shows all history */}
+    { currentScreen === 'history' && (
+      <div>
+        
+      </div>
+    )}
 
       <footer className="footer">
         <p>Theres always a deeper meaning.</p>
