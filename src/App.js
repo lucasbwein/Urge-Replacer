@@ -49,13 +49,13 @@ export default function App() {
   return (
     <main className="container">
 
-      {currentScreen === 'home' && (
+      {currentScreen === "home" && (
         <div className="home-screen">
           <h1 className="title__home">
             Replace the Urge
           </h1>
           <button
-            className='big__button'
+            className="big__button"
             onClick={() => setCurrentScreen('selectUrge')}
           >
             {/* Have a Urge? */}
@@ -63,6 +63,7 @@ export default function App() {
           </button>
         </div>
       )}
+
 
       {currentScreen === 'selectUrge' && (
         <div className='urge-screen'>

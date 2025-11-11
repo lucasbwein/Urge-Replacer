@@ -129,6 +129,8 @@ body {
   border-radius: 16px;
   cursor: pointer;
 
+  border: 2px solid rgba(255, 255, 255, 0.2);
+
   /* box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4); */
 
   transition: all 0.3s ease;
@@ -336,7 +338,7 @@ button:last-child:hover {
     padding: 1rem;
   }
 
-  big__button {
+  .big__button {
     padding: 1.5rem 2rem;
     font-size: 1.2rem;
   }
