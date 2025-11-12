@@ -189,13 +189,77 @@ body {
 .why-screen h1 {
   font-size: 2rem;
   line-height: 1.4;
-  margin-bottom: 3rem;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  margin-bottom: 1rem;
+  /* background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); */
+  background: white;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+.questions-prompt {
+  font-size: 24px;
+  line-height: 1.4;
+  /* text-align: center; */
+  margin-bottom: 1rem;
+  /* max-width: 400px; */
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.reflection-prompt {
+  background: rgba(255, 255, 255, 0.08);
+  border-left: 4px solid #f5576c;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+.reflection-prompt p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.timer-display {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+.timer-text {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  margin-bottom: 0.1rem;
+}
+.timer-countdown {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f5576c;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.timer-done {
+  font-size: 1rem;
+  color: #4CAF50;
+  margin: 0;
+}
+
+.bottom__buttons button.disabled,
+.bottom__buttons button:disabled {
+  cursor: disabled;
+  transform: none !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+button.disabled:hover,
+button:disabled:hover {
+  transform: none !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  box-shadow: none !important;
+}
 
 /* Alternatives */
 .alternatives-screen > div {
@@ -224,16 +288,19 @@ body {
 }
 .alternatives__buttons:hover {
   background: rgba(255, 255, 255, 0.15);
-  transform: translateX(8px);
+  transform: translateY(-4px);
   border-color: #667eea;
   box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
 }
 /* FIX -> FOR ONLY ODD */
-.alternatives__buttons:nth-last-child(1) {
+/* .alternatives__buttons:nth-last-child(1) {
   grid-column: 1 / -1;
   justify-self: center;
   width: 50%; 
-}
+} */
+
+/* FIX back button being wider */
+
 
 /* rating */
 .rating-screen > div {

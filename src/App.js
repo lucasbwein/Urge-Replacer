@@ -14,6 +14,21 @@ export default function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [reflectionTimer, setReflectionTimer] = useState(15);
+
+  /* Creates timer for reflection screen, also can add more time based on urge type */
+  useEffect(() => {
+    if(currentScreen === 'why' && reflectionTimer > 0) {
+      const interval = setInterval(() => {
+        setReflectionTimer(prev => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+    if(currentScreen !== 'why'){
+      setReflectionTimer(15);
+    }
+  }, [currentScreen, reflectionTimer]);
+
   useEffect(() => {
     localStorage.setItem('redirectHistory', JSON.stringify(redirectHistory));
   }, [redirectHistory]);
@@ -25,24 +40,46 @@ export default function App() {
     gaming: [
       'Code for 30 mins', 'Workout', 'Journal', 'Practice instrument',
       'Call a friend', 'Go for a walk', 'Read a chapter of something',
+      'Hang out with a friend', 'Work on a side project', 'Watch a tutorial and take notes',
+      'Do pushups/quick exercise', 'Clean/organize one area', 'Plan tomorrow authentically'
     ],
     scrolling: [
-      'Code for 30 mins', 'Workout', 'Journal', 'Practice instrument',
-      'Call a friend', 'Go for a walk', 'Read a chapter of something'
+      'Code for 30 mins', 'Workout', 'Journal - write thoughts', 'Practice instrument',
+      'Call a friend', 'Go for a walk', 'Read a chapter of something',
+      'Hang out with a friend', 'Clean your space',
+      'Plan your next project', 'Write down 3 things you\'re grateful for',
+      'Do a coding challenge(LeetCode)','Text someone you care about',
+      'Go outside without phone'
     ],
     shows: [
       'Code for 30 mins', 'Workout', 'Journal', 'Practice instrument',
-      'Call a friend', 'Go for a walk', 'Read a chapter of something'
+      'Call a friend for real conversation', 'Go for a walk', 'Read fiction/non-fiction',
+      'Hang out with a friend', 'Go outside and photograph', 'Cook a real meal',
+      'Journal about your day or thoughts'
     ],
     food: [
-      'Go for a walk', 'Drink some water', 'Journal', 'Call a friend',
-      'Go for a drive'
+      'Go for a walk', 'Drink some water and wait', 'Journal -  what emotion am I avoiding?',
+      'Call a friend', 'Chew gum', 'Make tea/coffee instead', 'Sit with the feeling for 5 mins',
+      'Go for a drive', 'Brush teeth (changes taste/mindset)', 'Take a cold shower'
     ],
     avoiding: ['Set a 5-min timer and start', 'Clean room', 'Make bed',
-      'Complete one small task', 'Sit with self(emotions)', 'Journal'
+      'Complete one small task', 'Sit with self(emotions)', 'Journal - why?',
+      'Make bed (small wins build momentum)', 'Sit with the discomfort for 4 mins',
+      'Remember: "No matter what I can handle it and move forward"', 
+      'Start with the hardest part for 3 mins', 'Break task into smallest possible step',
+      'Write down the exact thing I am avoiding'
     ]
   };
+  const urgeQuestions = {
+    gaming: "Am I avoiding something difficult? What would building feel like instead of playing?",
+    scrolling: "What real connection am I craving? Who could I reach out to?",
+    shows: "What am I numbing? What creative thing wants to come out of me?",
+    food: "What emotion am I trying to suppress? Can I sit with it for 2 minutes?",
+    avoiding: "What's the 2-minute version of starting this? What's one tiny step?"
+  };
 
+  /* Either use numbers for next or set up system */
+  // const screens = ['home', 'selectUrge', 'why', 'alternatives', 'rating', 'stats', 'history'];
 
   const urgeLabels = {
     gaming: "Wants to game",
@@ -99,10 +136,33 @@ export default function App() {
         <div className='why-screen'>
           <p>Ask yourself: </p>
           <h1>What am I avoiding and why?</h1>
+          <p className="questions-prompt">{urgeQuestions[selectedUrge]}</p>
 
+          {/* Doesn't let user continue until 15 sec is up */}
+          <div className="timer-display">
+            {/* Can add timer circle to display the amount left instead or with
+                current countdown */}
+            {reflectionTimer > 0 ? (
+              <>
+                <p className="timer-text">Take a moment to reflect...</p>
+                <p className="timer-countdown">{reflectionTimer}s</p>
+              </>
+            ) : (
+              <p className="timer-done">✓ You can continue </p>
+              
+            )}
+          </div>
           <div className="bottom__buttons">
-            <button onClick={() => setCurrentScreen('selectUrge')}>Back</button>
-            <button onClick={() => setCurrentScreen('alternatives')}>Next</button>
+            <button 
+              disabled={reflectionTimer > 0}
+              className={reflectionTimer > 0 ? 'disabled' : ''}
+              onClick={() => setCurrentScreen('selectUrge')}
+            >Back</button>
+            <button 
+              disabled={reflectionTimer > 0}
+              className={reflectionTimer > 0 ? 'disabled' : ''}
+              onClick={() => setCurrentScreen('alternatives')}
+            >Next</button>
           </div>
         </div>
       )}
@@ -116,7 +176,7 @@ export default function App() {
           <p>Urge: {urgeLabels[selectedUrge]}</p>
           <p className="alternative-try-text">Try one below:</p>
           <div>
-  {/* Add shuffle button for alt activities */}
+  {/* Add shuffle button for alt activities, after adding more alternatives */}
             {alternatives[selectedUrge].map(alt => (
               <button
                 key={alt}
