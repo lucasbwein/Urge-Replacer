@@ -228,6 +228,7 @@ body {
   border-color: #667eea;
   box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
 }
+/* FIX -> FOR ONLY ODD */
 .alternatives__buttons:nth-last-child(1) {
   grid-column: 1 / -1;
   justify-self: center;
