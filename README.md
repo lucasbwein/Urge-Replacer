@@ -20,7 +20,8 @@ The way it works is when a urge arises:
 - 5 types of general urges each cattered with alternatives
 - The question that grounds the user
 - 1-10 rating system to track feelings
-- A dashboard with the data taken overtime of redirects, urges, and ratings
+- A dashboard with the data of recent redirect, urge, and rating
+- History display of all past occurance
 - Mobile friendly 
 
 ## Used

@@ -28,7 +28,7 @@ export default function App() {
     }
     if(currentScreen !== 'why'){
       // setReflectionTimer(15); // CHANGE BACK AFTER
-      setReflectionTimer(3);
+      setReflectionTimer(10);
     }
   }, [currentScreen, reflectionTimer]);
 
@@ -327,7 +327,7 @@ export default function App() {
                      <p className="note-text">{redirect.note}</p>
                     </div>
                   )}
-                  
+
                   <p className="timestamp">
                     {new Date(redirect.timestamp).toLocaleDateString()}
                   </p>
