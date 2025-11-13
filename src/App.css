@@ -475,6 +475,34 @@ button:disabled:hover {
   flex: 1;
 }
 
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+.sort-controls label {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.sort-select {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.sort-select option {
+  background: #0a0e27;
+  color: white;
+}
+
 .delete__button {
   background: rgba(255, 59, 48, 0.2);
   color: #ff3b30;

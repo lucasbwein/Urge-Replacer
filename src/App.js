@@ -16,6 +16,8 @@ export default function App() {
 
   const [note, setNote] = useState("");
 
+  const [sortOrder, setSortOrder] = useState('newest');
+
   const [reflectionTimer, setReflectionTimer] = useState(15);
 
   /* Creates timer for reflection screen, also can add more time based on urge type */
@@ -28,7 +30,7 @@ export default function App() {
     }
     if(currentScreen !== 'why'){
       // setReflectionTimer(15); // CHANGE BACK AFTER
-      setReflectionTimer(10);
+      setReflectionTimer(3);
     }
   }, [currentScreen, reflectionTimer]);
 
@@ -46,6 +48,26 @@ export default function App() {
     if(confirmDelete) {
       const newHistory = redirectHistory.filter((_, i) => i !== index);
       setRedirectHistory(newHistory)
+    }
+  }
+
+  /* History sorting */
+  function getSortedHistory() {
+    const sorted = [...redirectHistory];
+
+    switch(sortOrder) {
+      case 'newest':
+        return sorted.reverse();
+      case 'oldest':
+        return sorted;
+      case 'highest-rating':
+        return sorted.sort((a, b) => b.rating - a.rating);
+      case 'lowest-rating':
+        return sorted.sort((a, b) => a.rating - b.rating);
+      case 'urge-type':
+        return sorted.sort((a, b) => a.urge.localeCompare(b.urge));
+        default:
+          return sorted.reverse();
     }
   }
 
@@ -101,7 +123,7 @@ export default function App() {
     gaming: "Wants to game",
     scrolling: "Doom scrolling",
     shows: "Wants to watch shows",
-    avoiding: "Avoiding something",
+    avoiding: "Avoiding something (Fear)",
     food: "Distracting with Food"
   };
 
@@ -123,7 +145,7 @@ export default function App() {
         </div>
       )}
 
-
+{/* Select an Urge */}
       {currentScreen === 'selectUrge' && (
         <div className='urge-screen'>
           <p className="urge__title">
@@ -148,6 +170,7 @@ export default function App() {
         </div>
       )}
 
+{/* Why do you have this urge */}
       {currentScreen === 'why' && (
         <div className='why-screen'>
           <p>Ask yourself: </p>
@@ -182,7 +205,8 @@ export default function App() {
           </div>
         </div>
       )}
-
+      
+{/* Alternatives to the urge */}
       {currentScreen === 'alternatives' && (
         <div className='alternatives-screen'>
           <h2>
@@ -283,6 +307,13 @@ export default function App() {
                   <p>Urge: {urgeLabels[redirectHistory[redirectHistory.length - 1].urge]}</p>
                   <p>Did: {redirectHistory[redirectHistory.length - 1].alternative}</p>
                   <p>Felt: {redirectHistory[redirectHistory.length - 1].rating}/10</p>
+
+                  {redirectHistory[redirectHistory.length - 1].note && (
+                    <div className="history-note">
+                     <p className="note-label">Note: </p> 
+                     <p className="note-text">{redirectHistory[redirectHistory.length - 1].note}</p>
+                    </div>
+                  )}
                 </div>
               </>
             )}
@@ -304,6 +335,23 @@ export default function App() {
       <div className="history-screen">
         <h2>Your History</h2>
         <h3>Total: {redirectHistory.length}</h3>
+
+        <div className="sort-controls">
+          <label htmlFor="sort">Sort by:</label>
+          <select
+            id="sort"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="sort-select"
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="highest-rating">Highest Rating</option>
+            <option value="lowest-rating">Lowest Rating</option>
+            <option value="urge-type">Urge Type</option>
+          </select>
+        </div>
+
         {redirectHistory.length === 0 ? (
           <div className="empty-history">
             <p>No redirects yet!</p>
@@ -311,8 +359,8 @@ export default function App() {
           </div>
         ) : (
         <div className="history-list">
-          {redirectHistory.slice().reverse().map((redirect, index) => {
-            const actualIndex = redirectHistory.length -1 - index;
+          {getSortedHistory().map((redirect, index) => {
+            const actualIndex = redirectHistory.findIndex(r => r === redirect);
 
             return(
               <div key={index} className="history-item">
