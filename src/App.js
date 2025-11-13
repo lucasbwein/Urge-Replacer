@@ -71,6 +71,39 @@ export default function App() {
     }
   }
 
+  /* Displays Analytics (most common) of History */
+  function getUrgeStats() {
+    if(redirectHistory.length === 0) return null;
+
+    const urgeCounts = {}; /* Counts amonut of urges occured */
+    redirectHistory.forEach(redirect => {
+      urgeCounts[redirect.urge] = (urgeCounts[redirect.urge] || 0) + 1;
+    });
+
+    /* Finds most common occurance of urge */
+    const mostCommon = Object.entries(urgeCounts).sort((a, b) => b[1] - a[1]);
+
+    const urgeRatings = {};
+    redirectHistory.forEach(redirect => {
+      if(!urgeRatings[redirect.urge]) {
+        urgeRatings[redirect.urge] = [];
+      }
+      urgeRatings[redirect.urge].push(redirect.rating);
+    });
+
+    const avgRatings = {}
+    Object.entries(urgeRatings).forEach(([urge, ratings]) => {
+      avgRatings[urge] = (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1);
+    });
+
+    return {
+      mostCommon,
+      urgeCounts,
+      avgRatings,
+      total: redirectHistory.length
+    };
+  }
+
   /* Can add more later */
   const urgeTypes = ['gaming', 'scrolling', 'avoiding', 'shows', 'food'];
 
@@ -300,6 +333,39 @@ export default function App() {
               Urges redirected: <strong>{redirectHistory.length}</strong>
             </p>
 
+{/* TODO: Potentially add to History screen as well */}
+            {/* displays analytic trends */}
+            {redirectHistory.length > 0 && getUrgeStats() && (
+              <div className="analytics">
+                <h3>Your Patterns</h3>
+
+                {/* Most common urges */}
+                <div className="analytics-grid">
+                  <div className="analytics-card">
+                    <p className="analytics-label">Most Common Urges</p>
+                    {getUrgeStats().mostCommon.slice(0, 3).map(([urge, count]) => (
+                      <div key={urge} className="urge-stat">
+                        <span className="urge-name">{urgeLabels[urge]}</span>
+                        <span className="urge-count">{count}x</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* average rating by urge */}
+                  <div className="analytics-card">
+                    <p className="analytics-label">Avg. Feeling After</p>
+                    {Object.entries(getUrgeStats().avgRatings).map(([urge, avg]) => (
+                      <div key={urge} className="urge-stat">
+                        <span className="urge-name">{urgeLabels[urge]}</span>
+                        <span className="urge-rating">{avg}/10</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* displays most recent redirect and urge */}
             {redirectHistory.length > 0 && (
               <>
                 <p>Most recent urge</p>

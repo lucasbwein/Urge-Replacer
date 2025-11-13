@@ -427,6 +427,72 @@ button:disabled:hover {
   margin: 1rem 0;
 }
 
+.analytics {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.analytics h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.analytics-card {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.analytics-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+
+.urge-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.urge-stat:last-child {
+  border-bottom: none;
+}
+
+.urge-name {
+  font-size: 0.95rem;
+}
+
+.urge-count {
+  font-weight: 700;
+  color: #f5576c;
+}
+
+.urge-rating {
+  font-weight: 700;
+  color: #4CAF50;
+}
+
+@media (max-width: 600px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ------------------------
     HISTORY
  ----------------------- */
