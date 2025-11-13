@@ -14,6 +14,8 @@ export default function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [note, setNote] = useState("");
+
   const [reflectionTimer, setReflectionTimer] = useState(15);
 
   /* Creates timer for reflection screen, also can add more time based on urge type */
@@ -25,13 +27,27 @@ export default function App() {
       return () => clearInterval(interval);
     }
     if(currentScreen !== 'why'){
-      setReflectionTimer(15);
+      // setReflectionTimer(15); // CHANGE BACK AFTER
+      setReflectionTimer(3);
     }
   }, [currentScreen, reflectionTimer]);
 
   useEffect(() => {
     localStorage.setItem('redirectHistory', JSON.stringify(redirectHistory));
   }, [redirectHistory]);
+
+  /* Deletes a redirect in history */
+  function deleteRedirect(index) {
+    const redirect = redirectHistory[index];
+    const confirmDelete = window.confirm(
+      `Delete this redirect?\n\nUrge: ${urgeLabels[redirect.urge]}\nAlternative: ${redirect.alternative}`
+    );
+
+    if(confirmDelete) {
+      const newHistory = redirectHistory.filter((_, i) => i !== index);
+      setRedirectHistory(newHistory)
+    }
+  }
 
   /* Can add more later */
   const urgeTypes = ['gaming', 'scrolling', 'avoiding', 'shows', 'food'];
@@ -197,6 +213,7 @@ export default function App() {
 
       )}
 
+{/* Rating allows user to rate: Maybe rework based on timing of task for review */}
       {currentScreen === 'rating' && (
         <div className="rating-screen">
           <h2 className="rating__title">How do you feel after?</h2>
@@ -214,9 +231,14 @@ export default function App() {
             ))}
           </select>
           <div className="Note">
-            <textarea>
-
-            </textarea>
+            <label htmlFor="note">Notes (optional):</label>
+            <textarea
+              id="note"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="How did it feel? What did you notice? Any thoughts..."
+              rows="4"
+            />
           </div>
           <div className="bottom__buttons">
             <button onClick={() => setCurrentScreen('alternatives')}>Back</button>
@@ -226,6 +248,7 @@ export default function App() {
                   const newRedirect = {
                     urge: selectedUrge,
                     alternative: selectedAlternative,
+                    note: note.trim(),
                     rating: parseInt(rating),
                     timestamp: new Date().toISOString(),
                   };
@@ -234,6 +257,7 @@ export default function App() {
 
                   setSelectedUrge('')
                   setSelectedAlternative('')
+                  setNote('')
                   setRating('')
                   setCurrentScreen('stats')
                 }
@@ -243,6 +267,7 @@ export default function App() {
         </div>
       )}
 
+{/* Stats screen overview */}
       {currentScreen === 'stats' && (
         <div className="stats-screen">
           <h2>Nice Work, Keep it Up!</h2>
@@ -263,7 +288,7 @@ export default function App() {
             )}
           </div>
           {redirectHistory.length > 0 && (
-            <button onClick={() => setCurrentScreen('history')}>
+            <button className="view-history-button" onClick={() => setCurrentScreen('history')}>
               View All History ({redirectHistory.length})
             </button>
           )}
@@ -274,22 +299,51 @@ export default function App() {
         </div>
       )}
 
-    {/* Shows all history */}
+{/* Shows all history */}
     { currentScreen === 'history' && (
       <div className="history-screen">
         <h2>Your History</h2>
+        <h3>Total: {redirectHistory.length}</h3>
+        {redirectHistory.length === 0 ? (
+          <div className="empty-history">
+            <p>No redirects yet!</p>
+            <p>Start by redirecting your first urge.</p>
+          </div>
+        ) : (
         <div className="history-list">
-          {redirectHistory.slice().reverse().map((redirect, index) => (
-            <div key={index} className="history-item">
-              <p><strong>{urgeLabels[redirect.Urge]}</strong></p>
-              <p>→ {redirect.alternative} </p>
-              <p>Felt: {redirect.rating}/10</p>
-              <p className="timestamp">
-                {new Date(redirect.timestamp).toLocaleDateString()}
-              </p>
-            </div>
-          ))}
+          {redirectHistory.slice().reverse().map((redirect, index) => {
+            const actualIndex = redirectHistory.length -1 - index;
+
+            return(
+              <div key={index} className="history-item">
+                <div className="history-content">
+                  <p><strong>{urgeLabels[redirect.urge]}</strong></p>
+                  <p>→ {redirect.alternative} </p>
+                  <p>Felt: {redirect.rating}/10</p>
+
+                  {redirect.note && (
+                    <div className="history-note">
+                     <p className="note-label">Note: </p> 
+                     <p className="note-text">{redirect.note}</p>
+                    </div>
+                  )}
+                  
+                  <p className="timestamp">
+                    {new Date(redirect.timestamp).toLocaleDateString()}
+                  </p>
+                </div>
+
+              {/* Delete button on history */}
+                <button
+                  className="delete__button"
+                  onClick={() => deleteRedirect(actualIndex)}
+                  title="Delete this redirect"
+                >✕</button>
+              </div>
+            );
+          })}
         </div>
+        )}
         <div className="bottom__buttons">
           <button onClick={() => setCurrentScreen('stats')}>Back</button>
           <button onClick={() => setCurrentScreen('home')}>Home</button>
