@@ -34,8 +34,8 @@ export default function App() {
       return () => clearInterval(interval);
     }
     if(currentScreen !== 'why'){
-      setReflectionTimer(15); 
-      // setReflectionTimer(5);
+      // setReflectionTimer(15); 
+      setReflectionTimer(5);
     }
   }, [currentScreen, reflectionTimer]);
 
