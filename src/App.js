@@ -541,17 +541,20 @@ export default function App() {
                 <option value="15">15 minutes</option>
               </select>
 
-              <button
-                onClick={() => {
-                  localStorage.setItem('lastIntentionTime', Date.now().toString());
-                  localStorage.setItem('lastIntention', intention);
-                  setRecentIntention(true);
-                  alert(`Intention set for ${timeLimit} mins. Enable your Focus Mode, then open the app.`);
-                }}
-                disabled={!intention.trim()}
-              >
-                Set Intention
-              </button>
+                <button
+                  onClick={() => {
+                    localStorage.setItem('lastIntentionTime', Date.now().toString());
+                    localStorage.setItem('lastIntention', intention);
+                    setRecentIntention(true);
+
+                    // Call the specific shortcut for that app
+                    const shortcutName = `Open ${targetApp} Intentional`;
+                    window.location.href = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}`;
+                  }}
+                  disabled={!intention.trim()}
+                >
+                  Set Intention & Open {targetApp}
+                </button>
             </>
           )}
 
