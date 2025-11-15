@@ -521,7 +521,20 @@ export default function App() {
 
         </div>
       )}
-
+{/* Automation instructions
+Add focus called "Intentional use"
+Open Insta: https://www.icloud.com/shortcuts/e9c81ab45cc84f66bcf9dac153ce229f
+Open Youtube: https://www.icloud.com/shortcuts/e78cf7d12509465294f8b283aa7c8bd9
+Get Current Focus: https://www.icloud.com/shortcuts/2cd633bd9b394e5d8f06ec159e04c403
+1. Open Shortcuts → Automation → +
+2. Tap "App" → Select Instagram/YouTube
+3. "Is Opened" checked → Next
+4. Add "Get Current Focus"
+5. Add "If" → Current Focus does not have any value
+6. Inside If: Add "Open URLs" → [your-site-url]
+7. Turn off "Ask Before Running"
+8. Done
+ */}
 {/* INTENTIONAL USE */}
       {currentScreen === 'setIntention' && (
         <div className="intention-screen">
@@ -542,11 +555,16 @@ export default function App() {
               <button
                 className="continue__button"
                 onClick={() => {
-                  if (targetApp) {
+                  if (!targetApp) {
+                    alert('Select an app first');
+                    return;
+                  }
+                  
+                  if (isMobile) {
                     const shortcutName = `Open ${targetApp} Intentional`;
                     window.location.href = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}`;
                   } else {
-                    alert('Select an app first');
+                    alert(`Your intention is set. Now open ${targetApp} in your browser.`);
                   }
                 }}
               >
