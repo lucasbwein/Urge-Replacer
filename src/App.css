@@ -112,6 +112,7 @@ body {
 .home-screen,
 .urge-screen,
 .why-screen,
+.reason-screen,
 .alternatives-screen,
 .rating-screen,
 .stats-screen,
@@ -294,6 +295,59 @@ button:disabled:hover {
   opacity: 0.3;
   background: rgba(255, 255, 255, 0.05) !important;
   box-shadow: none !important;
+}
+
+/* ------------------------
+    REASONS
+ ----------------------- */
+
+.reason-screen {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.reason-screen h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.chosen-urge {
+  font-size: 1.1rem;
+  color: #f5576c;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.reason-subtitle {
+  opacity: 0.6;
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+
+.reason__buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  max-width: 450px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.reason__buttons button {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.reason__buttons button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.03);
+  border-color: rgba(102, 126, 234, 0.5);
 }
 
 /* ------------------------
@@ -686,7 +740,6 @@ button:disabled:hover {
   color: white;
 }
 
-
 .delete__button {
   background: rgba(255, 59, 48, 0.2);
   color: #ff3b30;
@@ -975,6 +1028,10 @@ button:active {
     font-size: 1.5rem;
   }
 
+  .reason__buttons {
+    grid-template-columns: 1fr;
+  }
+
   .questions-prompt {
     font-size: 1rem;
   }
@@ -1089,6 +1146,7 @@ button:active {
   .home-screen,
   .urge-screen,
   .why-screen,
+  .reason-screen,
   .alternatives-screen,
   .rating-screen,
   .stats-screen,

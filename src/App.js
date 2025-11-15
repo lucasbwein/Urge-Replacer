@@ -10,7 +10,7 @@ export default function App() {
   const [rating, setRating] = useState("");
 
   const [redirectHistory, setRedirectHistory] = useState(() => {
-    const saved = localStorage.getItem('redirectHistory');
+    const saved = localStorage.getItem('redirectHistory'); /* allows for local saving */
     return saved ? JSON.parse(saved) : [];
   });
 
@@ -18,7 +18,9 @@ export default function App() {
 
   const [sortOrder, setSortOrder] = useState('newest');
 
-  const [reflectionTimer, setReflectionTimer] = useState(15);
+  const [reflectionTimer, setReflectionTimer] = useState(5);
+
+  const [selectedReason, setSelectedReason] = useState('');
 
   /* Resets screen at top when going next page */
   useEffect(() => {
@@ -34,8 +36,8 @@ export default function App() {
       return () => clearInterval(interval);
     }
     if(currentScreen !== 'why'){
-      setReflectionTimer(15); 
-      // setReflectionTimer(5);
+      setReflectionTimer(5); 
+      // setReflectionTimer(3);
     }
   }, [currentScreen, reflectionTimer]);
 
@@ -80,15 +82,25 @@ export default function App() {
   function getUrgeStats() {
     if(redirectHistory.length === 0) return null;
 
-    const urgeCounts = {}; /* Counts amonut of urges occured */
+    const urgeCounts = {}; /* Counts num of urges occured */
     redirectHistory.forEach(redirect => {
       urgeCounts[redirect.urge] = (urgeCounts[redirect.urge] || 0) + 1;
+    });
+
+    const reasonCounts = {}; /* Counts num of reasons */
+    redirectHistory.forEach(redirect => {
+      if (redirect.reason) {
+       reasonCounts[redirect.reason] = (reasonCounts[redirect.reason] || 0) + 1;
+      }
     });
 
     /* Finds most common occurance of urge */
     const mostCommon = Object.entries(urgeCounts).sort((a, b) => b[1] - a[1]);
 
-    const urgeRatings = {};
+    const mostCommonReason = Object.entries(reasonCounts)
+      .sort((a, b) => b[1] - a[1]);
+
+    const urgeRatings = {}; /* Avg rating per urge //MAYBE RESTRUCTURE TOWARDS REASON */
     redirectHistory.forEach(redirect => {
       if(!urgeRatings[redirect.urge]) {
         urgeRatings[redirect.urge] = [];
@@ -101,16 +113,35 @@ export default function App() {
       avgRatings[urge] = (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1);
     });
 
+
+    const reasonRatings = {};
+    redirectHistory.forEach(redirect => {
+      if (redirect.reason) {
+        if (!reasonRatings[redirect.reason]) {
+          reasonRatings[redirect.reason] = [];
+        }
+        reasonRatings[redirect.reason].push(redirect.rating);
+      }
+    });
+
+    const avgReasonRatings = {};
+    Object.entries(reasonRatings).forEach(([reason, ratings]) => {
+      avgReasonRatings[reason] = (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1);
+    });
+
     return {
       mostCommon,
       urgeCounts,
+      mostCommonReason,
       avgRatings,
+      avgReasonRatings,
       total: redirectHistory.length
     };
   }
 
   function resetForm() {
     setSelectedUrge('');
+    setSelectedReason('');
     setSelectedAlternative('');
     setNote('');
     setRating('');
@@ -119,57 +150,289 @@ export default function App() {
   /* Can add more later */
   const urgeTypes = ['gaming', 'scrolling', 'avoiding', 'shows', 'food'];
 
-  const alternatives = {
-    gaming: [
-      'Code for 30 mins', 'Workout', 'Journal', 'Practice instrument',
-      'Call a friend', 'Go for a walk', 'Read a chapter of something',
-      'Hang out with a friend', 'Work on a side project', 'Watch a tutorial and take notes',
-      'Do pushups/quick exercise', 'Clean/organize one area', 'Plan tomorrow authentically'
+  // const alternatives = {
+  //   gaming: [
+  //     // Physical/Movement
+  //     'Workout - lift weights or bodyweight',
+  //     'Go for a walk outside',
+  //     'Do 20 pushups right now',
+  //     'Stretch for 10 minutes',
+  //     'Go for a run',
+      
+  //     // Creative/Building
+  //     'Code for 30 mins on a project',
+  //     'Work on your side project',
+  //     'Watch a coding tutorial and take notes',
+  //     'Do a LeetCode challenge',
+  //     'Write in your journal',
+  //     'Practice an instrument',
+  //     'Draw or sketch something',
+      
+  //     // Social/Connection
+  //     'Call a friend',
+  //     'Text someone you care about',
+  //     'Hang out with a friend in person',
+  //     'Go to a coffee shop and be around people',
+      
+  //     // Productive/Growth
+  //     'Read a chapter of a book',
+  //     'Clean/organize one area of your space',
+  //     'Plan tomorrow with intention',
+  //     'Learn something new for 20 mins',
+  //     'Work on your resume or portfolio',
+      
+  //     // Mindfulness
+  //     'Sit with the feeling for 5 minutes',
+  //     'Meditate for 10 minutes',
+  //     'Write down what you\'re avoiding',
+  //     'Ask: What would building feel like instead?'
+  //   ],
+    
+  //   scrolling: [
+  //     // Physical/Movement
+  //     'Workout',
+  //     'Go for a walk WITHOUT your phone',
+  //     'Do a quick exercise circuit',
+  //     'Stretch and move your body',
+  //     'Go outside and get sunlight',
+      
+  //     // Creative/Building
+  //     'Code for 30 mins',
+  //     'Journal your thoughts',
+  //     'Practice an instrument',
+  //     'Work on a creative project',
+  //     'Write something - anything',
+  //     'Plan your next project',
+      
+  //     // Social/Connection
+  //     'Call a friend for real conversation',
+  //     'Text someone meaningful',
+  //     'Hang out with someone in person',
+  //     'Go to a public space and people watch',
+      
+  //     // Productive/Growth
+  //     'Read a chapter of something',
+  //     'Clean your space',
+  //     'Do a coding challenge',
+  //     'Write down 3 things you\'re grateful for',
+  //     'Organize your desk or room',
+  //     'Learn a new skill for 15 mins',
+      
+  //     // Mindfulness
+  //     'Put phone in another room for 30 mins',
+  //     'Sit with the boredom - what\'s underneath?',
+  //     'Ask: What real connection am I craving?',
+  //     'Notice the urge without acting on it',
+  //     'Breathe deeply for 2 minutes'
+  //   ],
+    
+  //   shows: [
+  //     // Physical/Movement
+  //     'Workout',
+  //     'Go for a walk',
+  //     'Cook a real meal from scratch',
+  //     'Go outside and photograph something',
+  //     'Stretch or do yoga',
+      
+  //     // Creative/Building
+  //     'Code for 30 mins',
+  //     'Journal about your day',
+  //     'Practice an instrument',
+  //     'Draw or create something',
+  //     'Write a short story or poem',
+  //     'Work on a personal project',
+      
+  //     // Social/Connection
+  //     'Call a friend for real conversation',
+  //     'Hang out with someone in person',
+  //     'Text someone you haven\'t talked to',
+  //     'Go to a social event or meetup',
+      
+  //     // Productive/Growth
+  //     'Read fiction or non-fiction',
+  //     'Listen to an educational podcast',
+  //     'Learn something new',
+  //     'Clean or organize your space',
+  //     'Plan something for the week',
+      
+  //     // Mindfulness
+  //     'Ask: What am I numbing right now?',
+  //     'Sit with the discomfort for 5 mins',
+  //     'Journal: What creative thing wants to come out?',
+  //     'Meditate on what you\'re feeling',
+  //     'Notice what emotion you\'re avoiding'
+  //   ],
+    
+  //   food: [
+  //     // Physical/Movement
+  //     'Go for a walk first',
+  //     'Do 10 minutes of exercise',
+  //     'Take a cold shower',
+  //     'Stretch your body',
+  //     'Go for a drive',
+      
+  //     // Delay Tactics
+  //     'Drink a full glass of water and wait 10 mins',
+  //     'Chew gum',
+  //     'Brush your teeth',
+  //     'Make tea or coffee instead',
+  //     'Wait 15 minutes then reassess',
+      
+  //     // Social/Connection
+  //     'Call a friend',
+  //     'Text someone',
+  //     'Go be around people',
+      
+  //     // Mindfulness/Awareness
+  //     'Sit with the feeling for 5 mins',
+  //     'Journal: What emotion am I avoiding?',
+  //     'Ask: Am I actually hungry or avoiding something?',
+  //     'Rate your hunger 1-10 honestly',
+  //     'Notice the craving without acting',
+  //     'Write down what triggered this',
+      
+  //     // Alternatives
+  //     'Have a healthy snack if truly hungry',
+  //     'Drink water with lemon',
+  //     'Eat something with protein',
+  //     'Prepare food mindfully if eating'
+  //   ],
+    
+  //   avoiding: [
+  //     // Start Small
+  //     'Set a 5-min timer and just start',
+  //     'Do the smallest possible first step',
+  //     'Start with the hardest part for 3 mins',
+  //     'Write down exactly what you\'re avoiding',
+  //     'Break the task into tiny steps',
+  //     'Commit to just 2 minutes of the thing',
+      
+  //     // Build Momentum
+  //     'Make your bed (small win)',
+  //     'Clean one small area',
+  //     'Complete one tiny task first',
+  //     'Do the easiest part to build momentum',
+  //     'Set up your environment for success',
+      
+  //     // Mindfulness/Awareness
+  //     'Sit with the discomfort for 4 mins',
+  //     'Journal: Why am I avoiding this?',
+  //     'Ask: What\'s the worst that happens if I start?',
+  //     'Notice the fear without running from it',
+  //     'Acknowledge the fear, then do it anyway',
+      
+  //     // Reframe
+  //     'Remember: "I can handle it and move forward"',
+  //     'Ask: What would my future self want me to do?',
+  //     'Visualize how you\'ll feel AFTER doing it',
+  //     'Remind yourself: Done is better than perfect',
+  //     'Think: What\'s the cost of NOT doing this?',
+      
+  //     // Physical Reset
+  //     'Take 5 deep breaths',
+  //     'Do 10 pushups to change state',
+  //     'Stand up and move around',
+  //     'Splash cold water on your face',
+  //     'Step outside for fresh air'
+  //   ]
+  // };
+
+  const reasonAlternatives = {
+    'Avoiding discomfort': [
+    'Sit with the feeling for 5 mins',
+    'Journal about what you\'re avoiding',
+    'Take 10 deep breaths',
+    'Name the emotion out loud',
+    'Ask: what am I afraid will happen?',
+    'Go for a walk and stay with the feeling',
     ],
-    scrolling: [
-      'Code for 30 mins', 'Workout', 'Journal - write thoughts', 'Practice instrument',
-      'Call a friend', 'Go for a walk', 'Read a chapter of something',
-      'Hang out with a friend', 'Clean your space',
-      'Plan your next project', 'Write down 3 things you\'re grateful for',
-      'Do a coding challenge (LeetCode)','Text someone you care about',
-      'Go outside without phone'
+    'Bored/understimulated': [
+      'Code for 30 mins',
+      'Workout',
+      'Learn something new (video/article)',
+      'Work on a side project',
+      'Do a coding challenge',
+      'Practice instrument',
     ],
-    shows: [
-      'Code for 30 mins', 'Workout', 'Journal', 'Practice instrument',
-      'Call a friend for real conversation', 'Go for a walk', 'Read fiction/non-fiction',
-      'Hang out with a friend', 'Go outside and photograph', 'Cook a real meal',
-      'Journal about your day or thoughts'
+    'Avoiding a specific task': [
+      'Set 5-min timer and just start',
+      'Do the hardest part for 3 mins',
+      'Break task into smallest step',
+      'Write down exactly what you\'re avoiding',
+      'Tell someone you\'re starting now',
+      'Just open the file/app',
     ],
-    food: [
-      'Go for a walk', 'Drink some water and wait', 'Journal -  what emotion am I avoiding?',
-      'Call a friend', 'Chew gum', 'Make tea/coffee instead', 'Sit with the feeling for 5 mins',
-      'Go for a drive', 'Brush teeth (changes taste/mindset)', 'Take a cold shower'
+    'Suppressing an emotion': [
+      'Journal: what emotion is this?',
+      'Sit with it for 3 mins',
+      'Call someone and talk about it',
+      'Go for a walk without distractions',
+      'Cry if you need to',
+      'Write an unsent letter',
     ],
-    avoiding: ['Set a 5-min timer and start', 'Clean room', 'Make bed',
-      'Complete one small task', 'Sit with self(emotions)', 'Journal - why?',
-      'Make bed (small wins build momentum)', 'Sit with the discomfort for 4 mins',
-      'Remember: "No matter what I can handle it and move forward"', 
-      'Start with the hardest part for 3 mins', 'Break task into smallest possible step',
-      'Write down the exact thing I am avoiding'
-    ]
+    'Automatic habit': [
+      'Change your environment immediately',
+      'Drink a glass of water',
+      'Do 10 pushups',
+      'Step outside for 2 mins',
+      'Put phone in different room',
+      'Interrupt the pattern with movement',
+    ],
+    'Craving connection': [
+      'Text someone you care about',
+      'Call a friend',
+      'Go somewhere public',
+      'Reach out to make plans',
+      'Write to someone',
+      'Join an online community discussion',
+    ],
+    'Stressed/overwhelmed': [
+      'Take a walk outside',
+      'Do breathing exercises',
+      'Write down everything on your mind',
+      'Take a shower',
+      'Listen to calming music',
+      'Do one small manageable task',
+    ],
+    'Other/not sure': [
+      'Journal about what you\'re feeling',
+      'Go for a walk',
+      'Call a friend',
+      'Do something physical',
+      'Sit quietly for 5 mins',
+      'Change your environment',
+    ],
   };
-  const urgeQuestions = {
-    gaming: "Am I avoiding something difficult? What would building feel like instead of playing?",
-    scrolling: "What real connection am I craving? Who could I reach out to?",
-    shows: "What am I numbing? What creative thing wants to come out of me?",
-    food: "What emotion/task am I trying to suppress/avoid? Can I sit with it for 2 minutes?",
-    avoiding: "What's the 2-minute version of starting this? What's one tiny step?"
-  };
+
+  /* Maybe remove restructure towards urges instead */
+  // const urgeQuestions = {
+  //   gaming: "Am I avoiding something difficult? What would building feel like instead of playing?",
+  //   scrolling: "What real connection am I craving? Who could I reach out to?",
+  //   shows: "What am I numbing? What creative thing wants to come out of me?",
+  //   food: "What emotion/task am I trying to suppress/avoid? Can I sit with it for 2 minutes?",
+  //   avoiding: "What's the 2-minute version of starting this? What's one tiny step?"
+  // };
+
+  const urgeReasons = [
+    "Avoiding discomfort",
+    "Bored/understimulated", 
+    "Avoiding a specific task",
+    "Suppressing an emotion",
+    "Habit/automatic",
+    "Craving connection",
+    "Stressed/overwhelmed",
+    "Other/not sure",
+  ];
 
   /* Either use numbers for next or set up system */
   // const screens = ['home', 'selectUrge', 'why', 'alternatives', 'rating', 'stats', 'history'];
 
   const urgeLabels = {
-    gaming: "Wants to game",
-    scrolling: "Doom scrolling",
-    shows: "Wants to watch shows",
-    avoiding: "Avoiding something (Fear)",
-    food: "Distracting with Food"
+    gaming: "Wanting to video game",
+    scrolling: "Wanting to doom scroll",
+    shows: "Wanting to watch shows",
+    avoiding: "Avoiding feeling/thoughts",
+    food: "Wanting to distract with Food"
   };
 
   return (
@@ -221,7 +484,7 @@ export default function App() {
         <div className='why-screen'>
           <p>Ask yourself: </p>
           <h1>What am I avoiding and why?</h1>
-          <p className="questions-prompt">{urgeQuestions[selectedUrge]}</p>
+          {/* <p className="questions-prompt">{urgeQuestions[selectedUrge]}</p> */}
 
           {/* Doesn't let user continue until 15 sec is up */}
           <div className="timer-display">
@@ -246,8 +509,35 @@ export default function App() {
             <button 
               disabled={reflectionTimer > 0}
               className={reflectionTimer > 0 ? 'disabled' : ''}
-              onClick={() => setCurrentScreen('alternatives')}
+              onClick={() => setCurrentScreen('selectReason')}
             >Next</button>
+          </div>
+        </div>
+      )}
+
+{/* REASON SELECTOR */}
+      {currentScreen === 'selectReason' && (
+        <div className="reason-screen">
+          <h2>What is the reason underneath?</h2>
+          <p className="chosen-urge">{urgeLabels[selectedUrge]}</p>
+          <p className="reason-subtitle">Select what fits best</p>
+
+          <div className="reason__buttons">
+            {urgeReasons.map(reason => (
+              <button
+                key={reason}
+                onClick={() => {
+                  setSelectedReason(reason);
+                  setCurrentScreen('alternatives');
+                }}
+              >
+                {reason}
+              </button>
+            ))}
+          </div>
+
+          <div className="bottom__buttons">
+            <button onClick={() => setCurrentScreen('why')}>Back</button>
           </div>
         </div>
       )}
@@ -259,11 +549,12 @@ export default function App() {
             Let’s redirect that urge
             {/* Try one below instead */}
           </h2>
-          <p>Urge: {urgeLabels[selectedUrge]}</p>
+          <p>Reason: <strong>{selectedReason}</strong></p>
           <p className="alternative-try-text">Try one below:</p>
           <div>
+
   {/* Add shuffle button for alt activities, after adding more alternatives */}
-            {alternatives[selectedUrge].map(alt => (
+            {reasonAlternatives[selectedReason].map(alt => (
               <button
                 key={alt}
                 className='alternatives__buttons'
@@ -277,7 +568,7 @@ export default function App() {
             ))}
           </div>
           <div className="bottom__buttons">
-            <button onClick={() => setCurrentScreen('why')}>Back</button>
+            <button onClick={() => setCurrentScreen('selectReason')}>Back</button>
           </div>
         </div>
 
@@ -288,8 +579,11 @@ export default function App() {
         <div className="rating-screen">
           <h2 className="rating__title">How do you feel right now?</h2>
 
-{/* TODO, format the previous choice */}          
-          <p className="selected-alt">Chose: {selectedAlternative}</p>
+  {/* TODO, format the previous choice so its not so big*/}          
+          <p className="selected-alt">
+            <p>Urge: {urgeLabels[selectedUrge]}</p>
+            <p>Chose: {selectedAlternative}</p>
+          </p>
           {/* <div className="selected-alternative-box">
             <p className="selected-label">You chose:</p>
             <p className="selected-text">{selectedAlternative}</p>
@@ -313,7 +607,7 @@ export default function App() {
             1-3: Not good | 4-6: Alright | 7-10: Great choice
           </p>
 
-          {/* Adding optional personal note */}
+          {/* Optional personal note */}
           <div className="Note">
             <label htmlFor="note">Notes (optional):</label>
             <textarea
@@ -331,6 +625,7 @@ export default function App() {
                 if (rating) {
                   const newRedirect = {
                     urge: selectedUrge,
+                    reason: selectedReason,
                     alternative: selectedAlternative,
                     note: note.trim(),
                     rating: parseInt(rating),
@@ -365,6 +660,7 @@ export default function App() {
                 <p>Most recent urge</p>
                 <div className="recent-redirect">
                   <p>Urge: {urgeLabels[redirectHistory[redirectHistory.length - 1].urge]}</p>
+                  <p>Because: {redirectHistory[redirectHistory.length - 1].reason}</p>
                   <p>Did: {redirectHistory[redirectHistory.length - 1].alternative}</p>
                   <p>Felt: {redirectHistory[redirectHistory.length - 1].rating}/10</p>
 
@@ -384,12 +680,24 @@ export default function App() {
                 <h3>Your Patterns</h3>
 
                 {/* Most common urges */}
-                <div className="analytics-grid">
+                {/* <div className="analytics-grid">
                   <div className="analytics-card">
                     <p className="analytics-label">Most Common Urges</p>
                     {getUrgeStats().mostCommon.slice(0, 3).map(([urge, count]) => (
                       <div key={urge} className="urge-stat">
                         <span className="urge-name">{urgeLabels[urge]}</span>
+                        <span className="urge-count">{count}x</span>
+                      </div>
+                    ))}
+                  </div> */}
+                  
+                {/* Most Common Reason */}
+                <div className="analytics-grid">
+                  <div className="analytics-card">
+                    <p className="analytics-label">Top Reasons</p>
+                    {getUrgeStats().mostCommonReason.slice(0, 3).map(([reason, count]) => (
+                      <div key={reason} className="urge-stat">
+                        <span className="urge-name">{reason}</span>
                         <span className="urge-count">{count}x</span>
                       </div>
                     ))}
@@ -459,6 +767,9 @@ export default function App() {
               <div key={index} className="history-item">
                 <div className="history-content">
                   <p><strong>{urgeLabels[redirect.urge]}</strong></p>
+                  {redirect.reason && (
+                    <p className="history-reason">Because: {redirect.reason}</p>
+                  )}
                   <p>→ {redirect.alternative} </p>
                   <p>Felt: {redirect.rating}/10</p>
 
@@ -496,7 +807,7 @@ export default function App() {
                   <div className="stat-item">
                     <span className="stat-label">Most triggered by:</span>
                     <span className="stat-value">
-                      {urgeLabels[stats.mostCommon[0][0]]} ({stats.mostCommon[0][1]}x)
+                      {stats.mostCommonReason[0][0]} ({stats.mostCommonReason[0][1]}x)
                     </span>
                   </div>
                   <div className="stat-item">
@@ -505,6 +816,7 @@ export default function App() {
                       {stats.avgRatings[stats.mostCommon[0][0]]}/10
                     </span>
                   </div>
+      {/* ADD best alternative for given urge */}
                   <div className="stat-item">
                     <span className="stat-label">Best feeling redirect:</span>
                     <span className="stat-value">
