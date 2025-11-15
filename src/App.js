@@ -46,14 +46,23 @@ export default function App() {
 
   /* If intention is set then doesn't open instagram */
   useEffect(() => {
-    const lastIntention = localStorage.getItem('lastIntentionTime');
-    const fifteenMins = 15 * 60 * 1000;
-
-     if (lastIntention && Date.now() - parseInt(lastIntention) < fifteenMins) {
-       setRecentIntention(true);
-       const savedApp = localStorage.getItem('lastIntentionApp');
-       if (savedApp) setTargetApp(savedApp); 
-     }
+    const params = new URLSearchParams(window.location.search);
+    const app = params.get('app');
+    if (app) {
+      setTargetApp(app);
+      setCurrentScreen('setIntention');
+      
+      // Check if there's a recent intention
+      const lastIntention = localStorage.getItem('lastIntentionTime');
+      const lastApp = localStorage.getItem('lastIntentionApp');
+      const fifteenMins = 15 * 60 * 1000;
+      
+      if (lastIntention && 
+          lastApp === app && 
+          Date.now() - parseInt(lastIntention) < fifteenMins) {
+        setRecentIntention(true);
+      }
+    }
   }, []);
 
   /* Records what app was opened */
@@ -409,7 +418,7 @@ export default function App() {
       'Cry if you need to',
       'Write an unsent letter',
     ],
-    'Automatic habit': [
+    'Habit/automatic': [
       'Change your environment immediately',
       'Drink a glass of water',
       'Do 10 pushups',
@@ -512,9 +521,16 @@ export default function App() {
           {recentIntention ? (
             <>
               <h2>You recently set an intention</h2>
+              
               <p className="recent-time">
                 {Math.round((Date.now() - parseInt(localStorage.getItem('lastIntentionTime'))) / 60000)} minutes ago
               </p>
+
+              <div className="saved-intention">
+                <p className="intention-label">Your intention:</p>
+                <p className="intention-text">"{localStorage.getItem('lastIntention')}"</p>
+              </div>
+
               <p>Ready to continue?</p>
               <button
                 className="continue__button"
@@ -531,6 +547,9 @@ export default function App() {
               </button>
               <button onClick={() => setRecentIntention(false)}>
                 Set New Intention
+              </button>
+              <button onClick={() => setRecentIntention(false)}>
+                Stop Intention Timer
               </button>
             </>
           ) : (
@@ -572,6 +591,7 @@ export default function App() {
                   onClick={() => {
                     localStorage.setItem('lastIntentionTime', Date.now().toString());
                     localStorage.setItem('lastIntention', intention);
+                    localStorage.setItem('lastIntentionApp', targetApp);
                     setRecentIntention(true);
 
                     const shortcutName = `Open ${targetApp} Intentional`;
@@ -579,7 +599,7 @@ export default function App() {
                   }}
                   disabled={!intention.trim() || !targetApp}
                 >
-                  Set Intention & Open {targetApp}
+                  Set Intention & Open {targetApp || 'App'}
                 </button>
             </>
           )}
