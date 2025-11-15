@@ -20,6 +20,10 @@ export default function App() {
 
   const [reflectionTimer, setReflectionTimer] = useState(15);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentScreen]);
+
   /* Creates timer for reflection screen, also can add more time based on urge type */
   useEffect(() => {
     if(currentScreen === 'why' && reflectionTimer > 0) {
@@ -29,8 +33,7 @@ export default function App() {
       return () => clearInterval(interval);
     }
     if(currentScreen !== 'why'){
-      // setReflectionTimer(15); // CHANGE BACK AFTER
-      setReflectionTimer(3);
+      setReflectionTimer(15); 
     }
   }, [currentScreen, reflectionTimer]);
 
@@ -57,17 +60,17 @@ export default function App() {
 
     switch(sortOrder) {
       case 'newest':
-        return sorted.reverse();
+        return sorted.slice().reverse();
       case 'oldest':
         return sorted;
       case 'highest-rating':
-        return sorted.sort((a, b) => b.rating - a.rating);
+        return sorted.slice().sort((a, b) => b.rating - a.rating);
       case 'lowest-rating':
-        return sorted.sort((a, b) => a.rating - b.rating);
+        return sorted.slice().sort((a, b) => a.rating - b.rating);
       case 'urge-type':
-        return sorted.sort((a, b) => a.urge.localeCompare(b.urge));
+        return sorted.slice().sort((a, b) => a.urge.localeCompare(b.urge));
         default:
-          return sorted.reverse();
+          return sorted.slice().reverse();
     }
   }
 
@@ -104,6 +107,13 @@ export default function App() {
     };
   }
 
+  function resetForm() {
+    setSelectedUrge('');
+    setSelectedAlternative('');
+    setNote('');
+    setRating('');
+  }
+
   /* Can add more later */
   const urgeTypes = ['gaming', 'scrolling', 'avoiding', 'shows', 'food'];
 
@@ -119,7 +129,7 @@ export default function App() {
       'Call a friend', 'Go for a walk', 'Read a chapter of something',
       'Hang out with a friend', 'Clean your space',
       'Plan your next project', 'Write down 3 things you\'re grateful for',
-      'Do a coding challenge(LeetCode)','Text someone you care about',
+      'Do a coding challenge (LeetCode)','Text someone you care about',
       'Go outside without phone'
     ],
     shows: [
@@ -145,7 +155,7 @@ export default function App() {
     gaming: "Am I avoiding something difficult? What would building feel like instead of playing?",
     scrolling: "What real connection am I craving? Who could I reach out to?",
     shows: "What am I numbing? What creative thing wants to come out of me?",
-    food: "What emotion am I trying to suppress? Can I sit with it for 2 minutes?",
+    food: "What emotion/task am I trying to suppress/avoid? Can I sit with it for 2 minutes?",
     avoiding: "What's the 2-minute version of starting this? What's one tiny step?"
   };
 
@@ -163,6 +173,7 @@ export default function App() {
   return (
     <main className="container">
 
+{/* HOME */}
       {currentScreen === "home" && (
         <div className="home-screen">
           <h1 className="title__home">
@@ -178,7 +189,7 @@ export default function App() {
         </div>
       )}
 
-{/* Select an Urge */}
+{/* SELECT URGE */}
       {currentScreen === 'selectUrge' && (
         <div className='urge-screen'>
           <p className="urge__title">
@@ -203,7 +214,7 @@ export default function App() {
         </div>
       )}
 
-{/* Why do you have this urge */}
+{/* WHY / REFLECTION */}
       {currentScreen === 'why' && (
         <div className='why-screen'>
           <p>Ask yourself: </p>
@@ -239,7 +250,7 @@ export default function App() {
         </div>
       )}
       
-{/* Alternatives to the urge */}
+{/* ALTERNATIVES */}
       {currentScreen === 'alternatives' && (
         <div className='alternatives-screen'>
           <h2>
@@ -270,11 +281,20 @@ export default function App() {
 
       )}
 
-{/* Rating allows user to rate: Maybe rework based on timing of task for review */}
+{/* RATING: Maybe rework based on timing of task for review */}
       {currentScreen === 'rating' && (
         <div className="rating-screen">
-          <h2 className="rating__title">How do you feel after?</h2>
-          <p>Alternative Selected: {selectedAlternative}</p>
+          <h2 className="rating__title">How do you feel right now?</h2>
+
+{/* TODO, format the previous choice */}          
+          <p className="selected-alt">Chose: {selectedAlternative}</p>
+          {/* <div className="selected-alternative-box">
+            <p className="selected-label">You chose:</p>
+            <p className="selected-text">{selectedAlternative}</p>
+          </div> */}
+
+          <p className="rating__subtitle">Rate how you feel about this choice (1-10)</p>
+
           <select
             className="rating__select"
             value={rating}
@@ -287,13 +307,18 @@ export default function App() {
               </option>
             ))}
           </select>
+          <p className="rating-tip">
+            1-3: Not good | 4-6: Alright | 7-10: Great choice
+          </p>
+
+          {/* Adding optional personal note */}
           <div className="Note">
             <label htmlFor="note">Notes (optional):</label>
             <textarea
               id="note"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="How did it feel? What did you notice? Any thoughts..."
+              placeholder="How did choosing this make you feel? What are you noticing? Any thoughts..."
               rows="4"
             />
           </div>
@@ -311,20 +336,19 @@ export default function App() {
                   };
 
                   setRedirectHistory([...redirectHistory, newRedirect]);
-
-                  setSelectedUrge('')
-                  setSelectedAlternative('')
-                  setNote('')
-                  setRating('')
-                  setCurrentScreen('stats')
+                  resetForm();
+                  setCurrentScreen('stats');
                 }
               }}
-            >Done</button>
+              disabled={!rating}
+            >
+              Done
+            </button>
           </div>
         </div>
       )}
 
-{/* Stats screen overview */}
+{/* STATS */}
       {currentScreen === 'stats' && (
         <div className="stats-screen">
           <h2>Nice Work, Keep it Up!</h2>
@@ -332,38 +356,6 @@ export default function App() {
             <p className="stat__display">
               Urges redirected: <strong>{redirectHistory.length}</strong>
             </p>
-
-{/* TODO: Potentially add to History screen as well */}
-            {/* displays analytic trends */}
-            {redirectHistory.length > 0 && getUrgeStats() && (
-              <div className="analytics">
-                <h3>Your Patterns</h3>
-
-                {/* Most common urges */}
-                <div className="analytics-grid">
-                  <div className="analytics-card">
-                    <p className="analytics-label">Most Common Urges</p>
-                    {getUrgeStats().mostCommon.slice(0, 3).map(([urge, count]) => (
-                      <div key={urge} className="urge-stat">
-                        <span className="urge-name">{urgeLabels[urge]}</span>
-                        <span className="urge-count">{count}x</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* average rating by urge */}
-                  <div className="analytics-card">
-                    <p className="analytics-label">Avg. Feeling After</p>
-                    {Object.entries(getUrgeStats().avgRatings).map(([urge, avg]) => (
-                      <div key={urge} className="urge-stat">
-                        <span className="urge-name">{urgeLabels[urge]}</span>
-                        <span className="urge-rating">{avg}/10</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* displays most recent redirect and urge */}
             {redirectHistory.length > 0 && (
@@ -383,20 +375,52 @@ export default function App() {
                 </div>
               </>
             )}
+
+            {/* displays analytic trends */}
+            {redirectHistory.length > 0 && getUrgeStats() && (
+              <div className="analytics">
+                <h3>Your Patterns</h3>
+
+                {/* Most common urges */}
+                <div className="analytics-grid">
+                  <div className="analytics-card">
+                    <p className="analytics-label">Most Common Urges</p>
+                    {getUrgeStats().mostCommon.slice(0, 3).map(([urge, count]) => (
+                      <div key={urge} className="urge-stat">
+                        <span className="urge-name">{urgeLabels[urge]}</span>
+                        <span className="urge-count">{count}x</span>
+                      </div>
+                    ))}
+                  </div>
+{/* Add most common alternative from urge */}
+                  {/* average rating by urge */}
+                  <div className="analytics-card">
+                    <p className="analytics-label">Avg. Feeling After</p>
+                    {Object.entries(getUrgeStats().avgRatings).map(([urge, avg]) => (
+                      <div key={urge} className="urge-stat">
+                        <span className="urge-name">{urgeLabels[urge]}</span>
+                        <span className="urge-rating">{avg}/10</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            
           </div>
           {redirectHistory.length > 0 && (
             <button className="view-history-button" onClick={() => setCurrentScreen('history')}>
               View All History ({redirectHistory.length})
             </button>
           )}
-          <div className="bottom__buttons">
-            <button onClick={() => setCurrentScreen('rating')}>Back</button>
-            <button onClick={() => setCurrentScreen('home')}>Home</button>
-          </div>
+          {/* <div className="bottom__buttons"> */}
+          <button className="history-home" onClick={() => setCurrentScreen('home')}>Home</button>
+          {/* </div> */}
         </div>
       )}
 
-{/* Shows all history */}
+{/* HISTORY */}
     { currentScreen === 'history' && (
       <div className="history-screen">
         <h2>Your History</h2>
@@ -424,6 +448,7 @@ export default function App() {
             <p>Start by redirecting your first urge.</p>
           </div>
         ) : (
+          <>
         <div className="history-list">
           {getSortedHistory().map((redirect, index) => {
             const actualIndex = redirectHistory.findIndex(r => r === redirect);
@@ -457,6 +482,26 @@ export default function App() {
             );
           })}
         </div>
+
+        {getUrgeStats() && (
+          <div className="analytics-compact">
+            <h3>Quick Stats</h3>
+            <div className="stats-inline">
+              <div className="stat-item">
+                <span className="stat-label">Most common urge:</span>
+                <span className="stat-value">{urgeLabels[getUrgeStats().mostCommon[0][0]]} ({getUrgeStats().mostCommon[0][1]}x)</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Average feeling:</span>
+                <span className="stat-value">
+                  {Object.entries(getUrgeStats().avgRatings)
+                    .sort((a, b) => b[1] - a[1])[0][1]}/10
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+            </>
         )}
         <div className="bottom__buttons">
           <button onClick={() => setCurrentScreen('stats')}>Back</button>
@@ -466,7 +511,7 @@ export default function App() {
     )}
 
       <footer className="footer">
-        <p>Theres always a deeper meaning.</p>
+        <p>There's always a deeper meaning.</p>
       </footer>
     </main>
   );
