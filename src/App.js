@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import './App.css';
 
 export default function App() {
@@ -6,6 +6,7 @@ export default function App() {
 
   const [selectedUrge, setSelectedUrge] = useState('');
   const [selectedAlternative, setSelectedAlternative] = useState('');
+  const [selectedReason, setSelectedReason] = useState('');
 
   const [rating, setRating] = useState("");
 
@@ -20,12 +21,48 @@ export default function App() {
 
   const [reflectionTimer, setReflectionTimer] = useState(5);
 
-  const [selectedReason, setSelectedReason] = useState('');
+  /* Make it so you can still open insta with automation */
+  const [recentIntention, setRecentIntention] = useState(false);
+  const [intention, setIntention] = useState('');
+  const [timeLimit, setTimeLimit] = useState('10');
+  const [targetApp, setTargetApp] = useState('');
+
 
   /* Resets screen at top when going next page */
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentScreen]);
+
+  /* Redirects back to instagram */
+//   useEffect(() => {
+//   const params = new URLSearchParams(window.location.search);
+//   if (params.get('openapp') === 'instagram') {
+//     // Clear the param
+//     window.history.replaceState({}, '', '/');
+//     // Redirect to Instagram
+//     window.location.href = 'instagram://';
+//   }
+// }, []);
+
+  /* If intention is set then doesn't open instagram */
+  useEffect(() => {
+    const lastIntention = localStorage.getItem('lastIntentionTime');
+    const fifteenMins = 15 * 60 * 1000;
+
+    if (lastIntention && Date.now() - parseInt(lastIntention) < fifteenMins) {
+      setRecentIntention(true);
+    }
+  }, []);
+
+  /* Records what app was opened */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const app = params.get('app');
+    if (app) {
+      setTargetApp(app);
+      setCurrentScreen('setIntention');
+    }
+  }, []);
 
   /* Creates timer for reflection screen, also can add more time based on urge type */
   useEffect(() => {
@@ -451,6 +488,76 @@ export default function App() {
             {/* Have a Urge? */}
             I have an Urge
           </button>
+
+          {/* <button className="set-intention" onClick={() => {
+            This opens the Focus Mode (user enables it manually first time)
+            window.location.href = 'shortcuts://run-shortcut?name=Enable%20Intentional%20Use';
+          }}>
+            Continue with Intention
+          </button> */}
+          <button 
+            className="set-intention"
+            onClick={() => setCurrentScreen('setIntention')}
+          >
+            Set Intention for Social Media (mobile)
+          </button>
+        </div>
+      )}
+
+{/* INTENTIONAL USE */}
+      {currentScreen === 'setIntention' && (
+        <div className="intention-screen">
+          {recentIntention ? (
+            <>
+              <h2>You recently set an intention</h2>
+              <p className="recent-time">
+                {Math.round((Date.now() - parseInt(localStorage.getItem('lastIntentionTime'))) / 60000)} minutes ago
+              </p>
+              <p>Ready to continue?</p>
+              <button
+                className="continue__button"
+                onClick={() => {
+                  alert('Enable your Focus Mode, then open the app');
+                }}
+              >
+                Continue to App
+              </button>
+              <button onClick={() => setRecentIntention(false)}>
+                Set New Intention
+              </button>
+            </>
+          ) : (
+            <>
+              <h2>What's your intention?</h2>
+              <textarea
+                placeholder="I'm opening this app to..."
+                value={intention}
+                onChange={(e) => setIntention(e.target.value)}
+              />
+              <p>Time limit:</p>
+              <select value={timeLimit} onChange={(e) => setTimeLimit(e.target.value)}>
+                <option value="5">5 minutes</option>
+                <option value="10">10 minutes</option>
+                <option value="15">15 minutes</option>
+              </select>
+
+              <button
+                onClick={() => {
+                  localStorage.setItem('lastIntentionTime', Date.now().toString());
+                  localStorage.setItem('lastIntention', intention);
+                  setRecentIntention(true);
+                  alert(`Intention set for ${timeLimit} mins. Enable your Focus Mode, then open the app.`);
+                }}
+                disabled={!intention.trim()}
+              >
+                Set Intention
+              </button>
+            </>
+          )}
+
+          <button onClick={() => setCurrentScreen('home')}>
+            Actually, nevermind
+          </button>
         </div>
       )}
 
@@ -549,7 +656,7 @@ export default function App() {
             Let’s redirect that urge
             {/* Try one below instead */}
           </h2>
-          <p>Reason: <strong>{selectedReason}</strong></p>
+          <p className="alternative-reason">Reason: <strong>{selectedReason}</strong></p>
           <p className="alternative-try-text">Try one below:</p>
           <div>
 
@@ -693,6 +800,7 @@ export default function App() {
                   
                 {/* Most Common Reason */}
                 <div className="analytics-grid">
+
                   <div className="analytics-card">
                     <p className="analytics-label">Top Reasons</p>
                     {getUrgeStats().mostCommonReason.slice(0, 3).map(([reason, count]) => (
@@ -713,11 +821,11 @@ export default function App() {
                       </div>
                     ))}
                   </div>
+
                 </div>
               </div>
             )}
 
-            
           </div>
           {redirectHistory.length > 0 && (
             <button className="view-history-button" onClick={() => setCurrentScreen('history')}>

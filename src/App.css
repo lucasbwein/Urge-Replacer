@@ -357,12 +357,25 @@ button:disabled:hover {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-  margin: 2rem 0;
+  margin: 0;
 }
 .alternative-try-text {
   margin-top: 12px;
   font-size: 1.2rem;
   font-weight: 500;
+}
+
+.alternative-reason {
+  background: rgba(255, 255, 255, 0.08);
+  border-left: 3px solid rgba(102, 126, 234, 0.6);
+  padding: 0.4rem 1.25rem;
+  border-radius: 8px;
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+.alternative-reason strong {
+  color:#f5576c;
 }
 
 .alternatives__buttons {
@@ -786,7 +799,7 @@ button:disabled:hover {
 .history-item p:nth-child(2) {
   /* Alternative */
   color: rgba(255, 255, 255, 0.9);
-  padding-left: 0.5rem;
+  padding-left: 0.75rem;
 }
 
 .history-item p:nth-child(3) {
