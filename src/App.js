@@ -529,8 +529,28 @@ export default function App() {
           ) : (
             <>
               <h2>What's your intention?</h2>
+              {!targetApp && (
+                  <div className="app-selector">
+                    <p>Which app?</p>
+                    <select
+                      value={targetApp}
+                      onChange={(e) => setTargetApp(e.target.value)}
+                      className="app-select"
+                    >
+                      <option value="">Select app...</option>
+                      <option value="Instagram">Instagram</option>
+                      <option value="YouTube">YouTube</option>
+                    </select>
+                  </div>
+              )}
+
+              {/* Show selected app if already set */}
+              {targetApp && (
+                <p className="selected-app">Opening: <strong>{targetApp}</strong></p>
+              )}
+              
               <textarea
-                placeholder="I'm opening this app to..."
+                placeholder={`I'm opening ${targetApp || 'this app'} to...`}
                 value={intention}
                 onChange={(e) => setIntention(e.target.value)}
               />
@@ -547,14 +567,10 @@ export default function App() {
                     localStorage.setItem('lastIntention', intention);
                     setRecentIntention(true);
 
-                    if (targetApp) {
-                      const shortcutName = `Open ${targetApp} Intentional`;
-                      window.location.href = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}`;
-                    } else {
-                      alert(`Intention set for ${timeLimit} mins. Enable Focus Mode manually, then open the app.`);
-                    }
+                    const shortcutName = `Open ${targetApp} Intentional`;
+                    window.location.href = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}`;
                   }}
-                  disabled={!intention.trim()}
+                  disabled={!intention.trim() || !targetApp}
                 >
                   Set Intention & Open {targetApp}
                 </button>
