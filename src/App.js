@@ -485,25 +485,40 @@ export default function App() {
           })}
         </div>
 
-        {getUrgeStats() && (
-          <div className="analytics-compact">
-            <h3>Quick Stats</h3>
-            <div className="stats-inline">
-              <div className="stat-item">
-                <span className="stat-label">Most common urge:</span>
-                <span className="stat-value">{urgeLabels[getUrgeStats().mostCommon[0][0]]} ({getUrgeStats().mostCommon[0][1]}x)</span>
+          {(() => {
+            const stats = getUrgeStats();
+            if (!stats) return null;
+            
+            return (
+              <div className="analytics-compact">
+                <h3>Quick Stats</h3>
+                <div className="stats-inline">
+                  <div className="stat-item">
+                    <span className="stat-label">Most triggered by:</span>
+                    <span className="stat-value">
+                      {urgeLabels[stats.mostCommon[0][0]]} ({stats.mostCommon[0][1]}x)
+                    </span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Avg feeling after redirecting:</span>
+                    <span className="stat-value">
+                      {stats.avgRatings[stats.mostCommon[0][0]]}/10
+                    </span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Best feeling redirect:</span>
+                    <span className="stat-value">
+                      {urgeLabels[Object.entries(stats.avgRatings)
+                        .sort((a, b) => parseFloat(b[1]) - parseFloat(a[1]))[0][0]]} 
+                      ({Object.entries(stats.avgRatings)
+                        .sort((a, b) => parseFloat(b[1]) - parseFloat(a[1]))[0][1]}/10)
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="stat-item">
-                <span className="stat-label">Average feeling:</span>
-                <span className="stat-value">
-                  {Object.entries(getUrgeStats().avgRatings)
-                    .sort((a, b) => b[1] - a[1])[0][1]}/10
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-            </>
+            );
+          })()}
+          </>
         )}
         <div className="bottom__buttons">
           <button onClick={() => setCurrentScreen('stats')}>Back</button>
