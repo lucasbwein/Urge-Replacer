@@ -62,7 +62,7 @@ html, body, #root {
   padding: 0;
 }
 html {
-  background: #0f172a;
+  background: #0f172af2;
 }
 
 .container {
@@ -198,7 +198,7 @@ body {
   /* transform: translateY(-2px); */
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
-.urge__buttons button:nth-last-child(1) {
+.urge__buttons button:nth-last-child(1):nth-child(odd) {
   grid-column: 1 / -1;
   justify-self: center;
   width: calc(50% - 0.5rem);
@@ -961,10 +961,10 @@ button:active {
     font-size: 1rem;
   }
 
-  .urge__buttons button:nth-last-child(1):nth-child(odd) {
-    grid-column: auto;
-    width: 100%;
-  }
+.urge__buttons button:nth-last-child(1):nth-child(odd) {
+  grid-column: auto;
+  width: 100%;
+}
 
   .why-screen h1 {
     font-size: 1.5rem;
