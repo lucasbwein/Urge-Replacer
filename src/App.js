@@ -512,14 +512,13 @@ export default function App() {
           }}>
             Continue with Intention
           </button> */}
-          {isMobile && (
-            <button 
-              className="set-intention"
-              onClick={() => setCurrentScreen('setIntention')}
-            >
-              Set Intention for Social Media
-            </button>
-          )}
+          <button 
+           className="set-intention"
+            onClick={() => setCurrentScreen('setIntention')}
+          >
+            Set Intention for Social Media
+          </button>
+
         </div>
       )}
 
@@ -556,7 +555,13 @@ export default function App() {
               <button onClick={() => setRecentIntention(false)}>
                 Set New Intention
               </button>
-              <button onClick={() => setRecentIntention(false)}>
+              <button onClick={() => {
+                setRecentIntention(false);
+                localStorage.removeItem('lastIntentionTime');
+                localStorage.removeItem('lastIntention');
+                localStorage.removeItem('lastIntentionApp');
+                setCurrentScreen('home')
+              }}>
                 Stop Intention Timer
               </button>
             </>
@@ -595,20 +600,37 @@ export default function App() {
                 <option value="15">15 minutes</option>
               </select>
 
-                <button
-                  onClick={() => {
-                    localStorage.setItem('lastIntentionTime', Date.now().toString());
-                    localStorage.setItem('lastIntention', intention);
-                    localStorage.setItem('lastIntentionApp', targetApp);
-                    setRecentIntention(true);
+                {isMobile ? (
+                  // Mobile: Opens specific shortcut
+                  <button
+                    onClick={() => {
+                      localStorage.setItem('lastIntentionTime', Date.now().toString());
+                      localStorage.setItem('lastIntention', intention);
+                      localStorage.setItem('lastIntentionApp', targetApp);
+                      setRecentIntention(true);
 
-                    const shortcutName = `Open ${targetApp} Intentional`;
-                    window.location.href = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}`;
-                  }}
-                  disabled={!intention.trim() || !targetApp}
-                >
-                  Set Intention & Open {targetApp || 'App'}
-                </button>
+                      const shortcutName = `Open ${targetApp} Intentional`;
+                      window.location.href = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}`;
+                    }}
+                    disabled={!intention.trim() || !targetApp}
+                  >
+                    Set Intention & Open {targetApp || 'App'}
+                  </button>
+                ) : (
+                  // Desktop: Just saves intention, user opens app manually
+                  <button
+                    onClick={() => {
+                      localStorage.setItem('lastIntentionTime', Date.now().toString());
+                      localStorage.setItem('lastIntention', intention);
+                      localStorage.setItem('lastIntentionApp', targetApp);
+                      setRecentIntention(true);
+                      alert(`Intention set for ${timeLimit} mins. Now open ${targetApp} in your browser.`);
+                    }}
+                    disabled={!intention.trim() || !targetApp}
+                  >
+                    Set Intention
+                  </button>
+                )}
             </>
           )}
 
