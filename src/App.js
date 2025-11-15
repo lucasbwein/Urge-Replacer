@@ -49,9 +49,11 @@ export default function App() {
     const lastIntention = localStorage.getItem('lastIntentionTime');
     const fifteenMins = 15 * 60 * 1000;
 
-    if (lastIntention && Date.now() - parseInt(lastIntention) < fifteenMins) {
-      setRecentIntention(true);
-    }
+     if (lastIntention && Date.now() - parseInt(lastIntention) < fifteenMins) {
+       setRecentIntention(true);
+       const savedApp = localStorage.getItem('lastIntentionApp');
+       if (savedApp) setTargetApp(savedApp); 
+     }
   }, []);
 
   /* Records what app was opened */
@@ -517,10 +519,15 @@ export default function App() {
               <button
                 className="continue__button"
                 onClick={() => {
-                  alert('Enable your Focus Mode, then open the app');
+                  if (targetApp) {
+                    const shortcutName = `Open ${targetApp} Intentional`;
+                    window.location.href = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}`;
+                  } else {
+                    alert('Select an app first');
+                  }
                 }}
               >
-                Continue to App
+                Continue to {targetApp || 'App'}
               </button>
               <button onClick={() => setRecentIntention(false)}>
                 Set New Intention
