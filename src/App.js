@@ -547,9 +547,12 @@ export default function App() {
                     localStorage.setItem('lastIntention', intention);
                     setRecentIntention(true);
 
-                    // Call the specific shortcut for that app
-                    const shortcutName = `Open ${targetApp} Intentional`;
-                    window.location.href = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}`;
+                    if (targetApp) {
+                      const shortcutName = `Open ${targetApp} Intentional`;
+                      window.location.href = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}`;
+                    } else {
+                      alert(`Intention set for ${timeLimit} mins. Enable Focus Mode manually, then open the app.`);
+                    }
                   }}
                   disabled={!intention.trim()}
                 >
