@@ -1001,6 +1001,9 @@ button:active {
     font-size: 1rem;
     margin: 1rem auto;
   }
+  .rating-tip {
+    margin-top: 0;
+  }
 
   .stats-screen h2 {
     font-size: 1.75rem;
