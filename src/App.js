@@ -26,7 +26,13 @@ export default function App() {
   const [intention, setIntention] = useState('');
   const [timeLimit, setTimeLimit] = useState('10');
   const [targetApp, setTargetApp] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
 
+  /* detects if on mobile */
+  useEffect(() => {
+    const checkMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    setIsMobile(checkMobile);
+  }, []);
 
   /* Resets screen at top when going next page */
   useEffect(() => {
@@ -506,12 +512,14 @@ export default function App() {
           }}>
             Continue with Intention
           </button> */}
-          <button 
-            className="set-intention"
-            onClick={() => setCurrentScreen('setIntention')}
-          >
-            Set Intention for Social Media (mobile)
-          </button>
+          {isMobile && (
+            <button 
+              className="set-intention"
+              onClick={() => setCurrentScreen('setIntention')}
+            >
+              Set Intention for Social Media
+            </button>
+          )}
         </div>
       )}
 

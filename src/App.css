@@ -190,6 +190,24 @@ body {
   gap: 1rem;
   align-items: center;
 }
+.saved-intention {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.intention-label {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+}
+
+.intention-text {
+  font-style: italic;
+  font-size: 1.1rem;
+}
 
 .intention-screen h2 {
   font-size: 1.75rem;
