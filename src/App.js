@@ -20,6 +20,7 @@ export default function App() {
 
   const [reflectionTimer, setReflectionTimer] = useState(15);
 
+  /* Resets screen at top when going next page */
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentScreen]);
@@ -33,7 +34,8 @@ export default function App() {
       return () => clearInterval(interval);
     }
     if(currentScreen !== 'why'){
-      setReflectionTimer(15); 
+      // setReflectionTimer(15); 
+      setReflectionTimer(5);
     }
   }, [currentScreen, reflectionTimer]);
 
