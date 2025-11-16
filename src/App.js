@@ -522,7 +522,11 @@ export default function App() {
         </div>
       )}
 {/* Automation instructions
-Add focus called "Intentional use"
+Add potentially timer based ones
+
+Works best as a web app
+
+Add focus in settings, call it "Intentional use"
 Open Insta: https://www.icloud.com/shortcuts/e9c81ab45cc84f66bcf9dac153ce229f
 Open Youtube: https://www.icloud.com/shortcuts/e78cf7d12509465294f8b283aa7c8bd9
 Get Current Focus: https://www.icloud.com/shortcuts/2cd633bd9b394e5d8f06ec159e04c403

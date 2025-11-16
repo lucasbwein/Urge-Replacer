@@ -62,7 +62,8 @@ html, body, #root {
   padding: 0;
 }
 html {
-  background: #0f172a;
+  /* background: #0f172a; */
+  background: rgb(15, 23, 42);
 }
 
 .container {
