@@ -37,18 +37,8 @@ export default function App() {
   /* Resets screen at top when going next page */
   useEffect(() => {
     window.scrollTo(0, 0);
+    document.activeElement.getBoundingClientRect(); // makes it so it doesn't keep focus on mobile
   }, [currentScreen]);
-
-  /* Redirects back to instagram */
-//   useEffect(() => {
-//   const params = new URLSearchParams(window.location.search);
-//   if (params.get('openapp') === 'instagram') {
-//     // Clear the param
-//     window.history.replaceState({}, '', '/');
-//     // Redirect to Instagram
-//     window.location.href = 'instagram://';
-//   }
-// }, []);
 
   /* If intention is set then doesn't open instagram */
   useEffect(() => {
