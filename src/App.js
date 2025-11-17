@@ -516,7 +516,7 @@ export default function App() {
            className="set-intention"
             onClick={() => setCurrentScreen('setIntention')}
           >
-            Set Intention for Social Media
+            Set Intentional Use
           </button>
 
         </div>
