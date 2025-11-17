@@ -527,9 +527,12 @@ Add potentially timer based ones
 Works best as a web app
 
 Add focus in settings, call it "Intentional use"
-Open Insta: https://www.icloud.com/shortcuts/e9c81ab45cc84f66bcf9dac153ce229f
-Open Youtube: https://www.icloud.com/shortcuts/e78cf7d12509465294f8b283aa7c8bd9
+Insta: https://www.icloud.com/shortcuts/e9c81ab45cc84f66bcf9dac153ce229f
+Youtube: https://www.icloud.com/shortcuts/e78cf7d12509465294f8b283aa7c8bd9
+Snapchat: __
+Tiktok: ___
 Get Current Focus: https://www.icloud.com/shortcuts/2cd633bd9b394e5d8f06ec159e04c403
+Remove Current Focus: ___
 1. Open Shortcuts → Automation → +
 2. Tap "App" → Select Instagram/YouTube
 3. "Is Opened" checked → Next
@@ -560,7 +563,8 @@ Get Current Focus: https://www.icloud.com/shortcuts/2cd633bd9b394e5d8f06ec159e04
                 className="continue__button"
                 onClick={() => {
                   if (!targetApp) {
-                    alert('Select an app first');
+                    // if there is no app just does nothing
+                    alert(`No targeted app`);
                     return;
                   }
                   
@@ -574,7 +578,12 @@ Get Current Focus: https://www.icloud.com/shortcuts/2cd633bd9b394e5d8f06ec159e04
               >
                 Continue to {targetApp || 'App'}
               </button>
-              <button onClick={() => setRecentIntention(false)}>
+              <button onClick={() => {
+                setRecentIntention(false);
+                if (isMobile) {
+                    window.location.href = `shortcuts://run-shortcut?name=Intentional use off}`;
+                }
+              }}>
                 Set New Intention
               </button>
               <button onClick={() => {
@@ -583,6 +592,9 @@ Get Current Focus: https://www.icloud.com/shortcuts/2cd633bd9b394e5d8f06ec159e04
                 localStorage.removeItem('lastIntention');
                 localStorage.removeItem('lastIntentionApp');
                 setCurrentScreen('home')
+                if (isMobile) {
+                    window.location.href = `shortcuts://run-shortcut?name=Intentional use off}`;
+                }
               }}>
                 Stop Intention Timer
               </button>

@@ -167,17 +167,18 @@ body {
 }
 
 .set-intention {
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.7);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9rem;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.85rem;
   margin-top: 1.5rem;
   border-radius: 8px;
+  cursor: pointer;
 }
 .set-intention:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* ------------------------
@@ -1307,27 +1308,20 @@ button:active {
 
   .intention-screen textarea {
     min-height: 80px;
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 16px;
   }
 
   .intention-screen select {
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 16px; 
   }
 
-  .app-select {
-    font-size: 16px;
-    min-width: 180px;
+  .set-intention:hover {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
   }
 
-  .continue__button {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    width: 100%;
-  }
-
-  .intention-screen button {
-    padding: 0.625rem 1.25rem;
-    font-size: 0.95rem;
+  .reason__buttons button:hover {
+    transform: translateY(0);
   }
 }
 
@@ -1349,5 +1343,72 @@ button:active {
   .urge__buttons button,
   .big__button {
     transition: none;
+  }
+}
+
+/* Verifies that hover effects removed for mobile */
+@media (hover: none) {
+  /* General buttons */
+  button:hover {
+    transform: none !important;
+    opacity: 1 !important;
+    background: inherit !important;
+  }
+
+  /* Home screen */
+  .big__button:hover {
+    transform: scale(1);
+  }
+
+  .set-intention:hover {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Urge selection */
+  .urge__buttons button:hover {
+    transform: translateY(0);
+    background: rgba(102, 126, 234, 0.3);
+  }
+
+  /* Reason selection */
+  .reason__buttons button:hover {
+    transform: translateY(0);
+    background: rgba(102, 126, 234, 0.3);
+  }
+
+  /* Alternatives */
+  .alternatives__buttons:hover {
+    transform: translateY(0);
+    background: rgba(102, 126, 234, 0.3);
+  }
+
+  /* Intention screen */
+  .continue__button:hover {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  }
+
+  .intention-screen button:hover {
+    transform: none;
+    background: inherit;
+  }
+
+  .intention-screen button:last-child:hover {
+    background: transparent;
+  }
+
+  /* Bottom buttons */
+  .bottom__buttons button:hover {
+    background: rgba(102, 126, 234, 0.8);
+  }
+
+  /* History/Stats */
+  .delete__button:hover {
+    background: #dc2626;
+  }
+
+  .view-history-button:hover,
+  .history-home:hover {
+    transform: translateY(0);
   }
 }
