@@ -37,7 +37,7 @@ export default function App() {
   /* Resets screen at top when going next page */
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.activeElement.getBoundingClientRect(); // makes it so it doesn't keep focus on mobile
+    document.activeElement.blur(); // makes it so it doesn't keep focus on mobile
   }, [currentScreen]);
 
   /* If intention is set then doesn't open instagram */
