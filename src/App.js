@@ -1004,7 +1004,7 @@ export default function App() {
                     </span>
                   </div>
       {/* ADD best alternative for given urge */}
-                  <div className="stat-item">
+                  {/* <div className="stat-item">
                     <span className="stat-label">Best feeling redirect:</span>
                     <span className="stat-value">
                       {urgeLabels[Object.entries(stats.avgRatings)
@@ -1012,7 +1012,7 @@ export default function App() {
                       ({Object.entries(stats.avgRatings)
                         .sort((a, b) => parseFloat(b[1]) - parseFloat(a[1]))[0][1]}/10)
                     </span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             );
