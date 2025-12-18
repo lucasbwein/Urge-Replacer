@@ -612,7 +612,7 @@ export default function App() {
                       const shortcutName = `Open ${targetApp} Intentional`;
                       window.location.href = `shortcuts://run-shortcut?name=${encodeURIComponent(shortcutName)}`;
                     }}
-                    disabled={!intention.trim() || !targetApp}
+                    disabled={!targetApp}
                   >
                     Set Intention & Open {targetApp || 'App'}
                   </button>
@@ -626,7 +626,7 @@ export default function App() {
                       setRecentIntention(true);
                       alert(`Intention set for ${timeLimit} mins. Now open ${targetApp} in your browser.`);
                     }}
-                    disabled={!intention.trim() || !targetApp}
+                    disabled={!targetApp}
                   >
                     Set Intention
                   </button>
