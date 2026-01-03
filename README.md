@@ -194,8 +194,7 @@ The biggest learning wasn't technical - it was building something I actually use
 ## Related Projects
 
 After building this, I applied similar patterns to create:
-- [Questions Worth Asking](https://authentic-conversation-starter.vercel.app) - Conversation starter app
-- [Portfolio Website](your-portfolio-url) - Showcasing these projects
+- [Questions Worth Asking](https://authentic-conversation-starter.vercel.app) -
 
 ## License
 
